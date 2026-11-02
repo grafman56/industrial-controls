@@ -17,3 +17,6 @@ __pycache__/
 
 # Local agent instructions. Present in a working clone, never published.
 AGENTS.md
+
+# codeprep index
+.codeprep/
