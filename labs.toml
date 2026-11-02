@@ -1,0 +1,43 @@
+# Lab registry: one entry per lab in this repository.
+#
+# This file is the single source of truth for lab identity. ./labctl reads it
+# to list, check, deploy and destroy a lab. ./validate-repository.sh reads it
+# to find the topologies it must check.
+#
+# Only standard TOML is used, so the driver needs nothing beyond the Python
+# standard library.
+#
+# Rules this file is checked against:
+#   - every */<lab>.clab.yml in the repository has an entry here, and no entry
+#     points at a topology that does not exist
+#   - the topology's own `name:` matches the entry, so the clab-<name>- prefix
+#     is predictable
+#   - mgmt_subnet here matches the topology, and no two labs share one
+#   - every image is pinned by tag or digest; `latest` is rejected
+#
+# Addressing. Lab management networks in this repository use
+# 172.111.<n>.0/24, where <n> is a fixed number per lab. One lab is the
+# exception: modbus-tcp keeps 172.100.120.0/24 because it may be deployed on
+# the shared lab host right now, and a move would orphan the running
+# containers. No other lab may use that subnet.
+#
+# Field reference and the rules ./labctl enforces: docs/lifecycle.md
+
+version = 1
+
+# ---------------------------------------------------------------------------
+# Industrial control. The process model and the PLC run as containers.
+# ---------------------------------------------------------------------------
+
+[labs.modbus-tcp]
+dir = "modbus-tcp"
+topology = "modbus-tcp.clab.yml"
+summary = "Modbus TCP simulator and client, an OpenPLC Runtime v4 soft PLC and a tank process"
+mgmt_subnet = "172.100.120.0/24"
+images = ["ghcr.io/autonomy-logic/openplc-runtime:v4.3.1"]
+verify = ["verify.sh"]
+docker_builds = [{ image = "modbus-lab:3.12.1", context = "." }]
+# Measured on VM 200 `clab` (3 GB, 2 vCPU) with no other lab running: the four
+# containers plus the image build fit. A host with less than this refuses the
+# deploy in `doctor`.
+min_free_memory_mb = 2048

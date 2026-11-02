@@ -1,0 +1,16 @@
+# Containerlab runtime artifacts
+clab-*/
+*/runtime/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local overrides and secrets
+**/.env
+**/*.tfvars
+**/inventory.yml
+**/hosts.yml
+.tmp/
