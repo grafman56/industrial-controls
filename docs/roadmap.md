@@ -22,15 +22,22 @@ historian able to settle a question about what happened.
 Known gaps: one process variable, a counter instead of a process model, no
 alarms to a real notification path.
 
-## 3. `bacnet`
+## 3. `bacnet-ip`
+
+Built. Two devices and a client, in `bacnet-ip/`.
 
 Proves: a building automation protocol with objects, properties and services,
 not registers. A BACnet point has a name, a unit and a status, and that changes
 how an HMI is built.
 
-Needs: a BACnet/IP device simulator in a container (`bacnet-stack` demo server
-or a Python `BACpypes` device, both to be verified at build time), a client,
-and FUXA or Grafana for the view.
+What was built: an AHU and a VAV box as BACnet/IP devices in one container
+image, a client that discovers them with Who-Is and reads every point through
+ReadPropertyMultiple, and a codec in the standard library so the bytes in the
+image are the bytes in the repository. Nineteen points, verified locally.
+
+Still open: a write path and the priority array, COV subscriptions, a BBMD so
+discovery crosses a subnet, and the BTL properties a listed device reports.
+`bacnet-ip/ARCHITECTURE.md` explains what each one does.
 
 Question it answers: why a BMS integrator asks for a point list instead of a
 register map.

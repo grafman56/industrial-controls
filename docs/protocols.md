@@ -10,7 +10,7 @@ come before the manufacturing and utility protocols.
 | Protocol | Transport | Who uses it | Tool that reads it here | State |
 |---|---|---|---|---|
 | Modbus/TCP | TCP 502 (5020 in this lab) | Water, manufacturing, power meters, almost everything cheap | `pymodbus` client, FUXA driver, Wireshark, Zeek, the poller in `scada-hmi` | Labs exist |
-| BACnet/IP | UDP 47808 | Building automation: AHUs, VAV boxes, chillers, BMS head ends | `BACpypes` or `BAC0` client, FUXA BACnet driver | Planned |
+| BACnet/IP | UDP 47808 | Building automation: AHUs, VAV boxes, chillers, BMS head ends | `bacnet-ip/` lab: a device and a client written here, no third-party package | Working |
 | SNMP | UDP 161 | UPS, PDU, branch circuit monitors, any device in an EPMS | `snmpsim` for the agent, Telegraf `inputs.snmp`, `snmpwalk` | Planned |
 | Modbus RTU | Serial RS-485 | VFDs, power meters, legacy field devices | `pymodbus` RTU, a pty pair or serial bridge | Planned |
 | EtherNet/IP (CIP) | TCP 44818, UDP 2222 | US manufacturing, Rockwell/Allen-Bradley | `pycomm3`, FUXA driver, a CIP analyzer add-on for Zeek | Planned |

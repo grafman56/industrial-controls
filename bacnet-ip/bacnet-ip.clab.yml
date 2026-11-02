@@ -1,0 +1,33 @@
+name: bacnet-ip
+
+mgmt:
+  network: clab-bacnet-ip
+  ipv4-subnet: 172.111.30.0/24
+  ipv6-subnet: 3fff:172:111:30::/64
+
+topology:
+  nodes:
+    # Level 1 and 2: the equipment controllers. There is no `links:` block on
+    # purpose. A BACnet/IP device is reached over IP, so the management network
+    # is the only network this lab needs, and that is the lesson: BACnet/IP
+    # rides on the building network, for better and for worse.
+    ahu:
+      kind: linux
+      image: bacnet-lab:3.12.1
+      mgmt-ipv4: 172.111.30.10
+      cmd: python3 /lab/ahu.py --profile ahu --instance 1001 --verbose
+      ports:
+        - 127.0.0.1:47808:47808/udp
+
+    vav:
+      kind: linux
+      image: bacnet-lab:3.12.1
+      mgmt-ipv4: 172.111.30.11
+      cmd: python3 /lab/ahu.py --profile vav --instance 1002 --verbose
+
+    # The workstation: discovery, point reads, and a capture.
+    supervisor:
+      kind: linux
+      image: bacnet-lab:3.12.1
+      mgmt-ipv4: 172.111.30.20
+      cmd: sleep infinity

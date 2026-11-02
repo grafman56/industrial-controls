@@ -42,6 +42,17 @@ docker_builds = [{ image = "modbus-lab:3.12.1", context = "." }]
 # deploy in `doctor`.
 min_free_memory_mb = 2048
 
+[labs.bacnet-ip]
+dir = "bacnet-ip"
+topology = "bacnet-ip.clab.yml"
+summary = "Two BACnet/IP equipment controllers and a client that discovers them and reads every point"
+mgmt_subnet = "172.111.30.0/24"
+images = []
+verify = ["verify.sh"]
+docker_builds = [{ image = "bacnet-lab:3.12.1", context = "." }]
+# Three containers with no third-party runtime, so it is the lightest lab here.
+min_free_memory_mb = 1024
+
 # ---------------------------------------------------------------------------
 # Supervisory layer. An operator interface and a historian over the same
 # process. Six containers, so it asks for more memory than the protocol labs.
