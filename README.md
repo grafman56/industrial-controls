@@ -14,6 +14,7 @@ lab. Network protocols, fabrics and routing drills stay in
 |---|---|---|
 | `modbus-tcp` | A soft PLC exchanges real Modbus/TCP frames with a process model | Working. Moved here from `network/containerlab-labs-public`. |
 | `scada-hmi` | An operator interface and a historian over the same process | Sources and static checks only. Not yet deployed on a lab host. |
+| `bacnet-ip` | Two BACnet/IP devices and a client that discovers them and reads every point | Sources, unit tests and a local end-to-end run. Not yet deployed on a lab host. |
 
 Everything else in [docs/roadmap.md](docs/roadmap.md) is a plan, not a
 claim.
