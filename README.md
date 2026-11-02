@@ -36,7 +36,8 @@ ssh <user>@<lab-host>
 git clone http://<forgejo>/paul/Industrial-Controls.git
 cd Industrial-Controls
 ./labctl check                     # manifest against topology sources
-./labctl up modbus-tcp             # builds the simulator image, deploys, verifies
+./labctl up modbus-tcp             # builds the simulator image and deploys
+./labctl verify modbus-tcp         # checks the lab answers
 ```
 
 The OpenPLC Editor runs on your own PC. Tunnel its port to your PC:
