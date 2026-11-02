@@ -50,6 +50,10 @@ Write the program in Ladder Diagram first, then rewrite the same logic in
 Structured Text. The rewrite is the lesson: the same seal-in circuit looks
 different and behaves the same.
 
+`plc/` holds both versions already written, plus an instruction list version,
+as PLCopen files. Import them, or read them beside the editor. Check them with
+`python3 tools/plcopen.py lint plc/*.xml` before and after you change them.
+
 Observe: the scan cycle. Add a timer and watch the level fall between scans,
 then explain the result without saying "it is slow".
 
