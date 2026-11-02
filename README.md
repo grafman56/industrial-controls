@@ -96,6 +96,8 @@ docs/                   architecture, protocols, learning path, roadmap
   which tool reads it.
 - [docs/learning-path.md](docs/learning-path.md): the staged path from
   electrical work to controls and OT.
+- [docs/toolbox.md](docs/toolbox.md): what to install, in what order, and what
+  each tool proves.
 - [docs/roadmap.md](docs/roadmap.md): the labs that do not exist yet.
 - [docs/lifecycle.md](docs/lifecycle.md): the manifest schema and the rules
   the driver enforces.
