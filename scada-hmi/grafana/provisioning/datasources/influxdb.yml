@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    uid: influxdb
+    type: influxdb
+    access: proxy
+    url: http://172.111.20.31:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: lab
+      defaultBucket: process
+    secureJsonData:
+      # Lab value. The historian is reachable from this bridge network only,
+      # and the port is published on host loopback. It is not a secret.
+      token: lab-token-not-a-secret

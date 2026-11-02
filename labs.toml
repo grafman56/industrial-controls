@@ -41,3 +41,28 @@ docker_builds = [{ image = "modbus-lab:3.12.1", context = "." }]
 # containers plus the image build fit. A host with less than this refuses the
 # deploy in `doctor`.
 min_free_memory_mb = 2048
+
+# ---------------------------------------------------------------------------
+# Supervisory layer. An operator interface and a historian over the same
+# process. Six containers, so it asks for more memory than the protocol labs.
+# ---------------------------------------------------------------------------
+
+[labs.scada-hmi]
+dir = "scada-hmi"
+topology = "scada-hmi.clab.yml"
+summary = "FUXA HMI, a Modbus poller, an InfluxDB historian and a Grafana view of the tank process"
+mgmt_subnet = "172.111.20.0/24"
+images = [
+  "ghcr.io/autonomy-logic/openplc-runtime:v4.3.1",
+  "frangoteam/fuxa:1.3.5",
+  "influxdb:2.7.12",
+  "grafana/grafana:11.3.0",
+]
+verify = ["verify.sh"]
+# modbus-lab is built from the sibling lab so this topology does not depend on
+# the other lab being deployed first. Same context, same tag, one build.
+docker_builds = [
+  { image = "modbus-lab:3.12.1", context = "../modbus-tcp" },
+  { image = "ics-poller:1.0.0", context = "poller" },
+]
+min_free_memory_mb = 4096
