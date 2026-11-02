@@ -1,0 +1,118 @@
+{
+  "meter": "Three-phase feeder meter, 26 registers",
+  "note": "Addresses are zero-based register offsets, not Modbus one-based addresses. The word order is what the manual states for each block, and two blocks disagree on purpose.",
+  "registers": [
+    {
+      "name": "voltage_l1_n",
+      "description": "Line 1 to neutral RMS voltage",
+      "address": 0,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "V"
+    },
+    {
+      "name": "voltage_l2_n",
+      "address": 2,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "V"
+    },
+    {
+      "name": "voltage_l3_n",
+      "address": 4,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "V"
+    },
+    {
+      "name": "current_l1",
+      "description": "Line 1 RMS current",
+      "address": 6,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "A"
+    },
+    {
+      "name": "current_l2",
+      "address": 8,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "A"
+    },
+    {
+      "name": "current_l3",
+      "address": 10,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "A"
+    },
+    {
+      "name": "active_power_total",
+      "description": "Total three-phase active power",
+      "address": 12,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "kW"
+    },
+    {
+      "name": "reactive_power_total",
+      "address": 14,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "kvar"
+    },
+    {
+      "name": "power_factor_total",
+      "address": 16,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": ""
+    },
+    {
+      "name": "frequency",
+      "address": 18,
+      "type": "float32",
+      "word_order": "high_first",
+      "unit": "Hz"
+    },
+    {
+      "name": "energy_import",
+      "description": "Imported active energy, sent low word first in this block",
+      "address": 20,
+      "type": "uint32",
+      "word_order": "low_first",
+      "scale": 0.1,
+      "unit": "kWh"
+    },
+    {
+      "name": "demand_present",
+      "address": 22,
+      "type": "uint16",
+      "scale": 0.1,
+      "unit": "kW"
+    },
+    {
+      "name": "breaker_state",
+      "description": "1 closed, 0 open",
+      "address": 23,
+      "type": "uint16",
+      "scale": 1,
+      "unit": ""
+    },
+    {
+      "name": "thd_voltage_l1",
+      "address": 24,
+      "type": "uint16",
+      "scale": 0.1,
+      "unit": "%"
+    },
+    {
+      "name": "register_count",
+      "description": "The meter reports this so a poller can size its read",
+      "address": 25,
+      "type": "uint16",
+      "scale": 1,
+      "unit": ""
+    }
+  ]
+}
