@@ -56,22 +56,27 @@ CASE step OF
         END_IF;
 
     1:  (* pump running *)
-        pump_run := TRUE;
-        run_hours := run_hours + 0.001;
+        (* De-energize first and energize only in the ELSE. If the fault is
+           checked after the output is set, the pump stays on for one scan
+           with a fault present, which is the scan where the damage happens. *)
         IF fault THEN
             step := 2;
         ELSIF stop_cmd THEN
             step := 0;
+        ELSE
+            pump_run := TRUE;
+            run_hours := run_hours + 0.001;
         END_IF;
 
-    2:  (* fault latched *)
+    2:  (* fault, pump off, alarm latched *)
         alarm := TRUE;
         pump_run := FALSE;
         IF NOT fault THEN
             step := 3;
         END_IF;
 
-    3:  (* fault cleared, wait for the operator to release start *)
+    3:  (* fault cleared, alarm still latched until the operator acknowledges *)
+        alarm := TRUE;
         IF NOT start_cmd THEN
             step := 0;
         END_IF;
