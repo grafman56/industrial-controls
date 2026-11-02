@@ -74,8 +74,23 @@ labs.toml               one entry per lab, the only place a lab is described
 labctl                  lifecycle driver, standard library only
 validate-repository.sh  static gate: manifest, topologies, shell syntax
 modbus-tcp/             one lab: topology, image, process model, docs
+python/                 scan-cycle engine and power meter, both stand-alone
 docs/                   architecture, protocols, learning path, roadmap
 ```
+
+## Python projects
+
+Two projects under `python/`, standard library only. Neither needs a container,
+a virtual environment, or a network to run its tests.
+
+| Project | What it is |
+|---|---|
+| `python/scan-cycle/` | A PLC scan engine and two control programs, so control logic has tests |
+| `python/power-meter/` | A three-phase meter that answers Modbus/TCP, with its register map as data |
+
+The scan-cycle programs are the same logic as the PLC files in `plc/`, written
+twice on purpose. The meter is what an EPMS polls: 26 raw registers, with word
+order and scaling that a poller has to get right.
 
 ## Working rules
 
