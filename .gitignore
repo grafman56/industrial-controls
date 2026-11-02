@@ -14,3 +14,6 @@ __pycache__/
 **/inventory.yml
 **/hosts.yml
 .tmp/
+
+# Local agent instructions. Present in a working clone, never published.
+AGENTS.md
