@@ -170,13 +170,13 @@ def body_text(body, language):
     block = child(body, language)
     if block is None:
         return ""
-    collected = []
-    for element in block.iter():
-        if element.text and tag(element) == "p":
-            collected.append(element.text)
-        elif tag(element) == "p" and len(element) and element[0].text:
-            collected.append(element[0].text)
-    return "\n".join(collected).strip()
+    paragraphs = [element for element in block.iter() if tag(element) == "p"]
+    if paragraphs:
+        pieces = [element.text or "" for element in paragraphs]
+    else:
+        pieces = list(block.itertext())
+    pieces = [piece.strip() for piece in pieces if piece and piece.strip()]
+    return "\n".join(pieces).strip()
 
 
 # ---------------------------------------------------------------------------
@@ -243,6 +243,74 @@ def check_pou(pou, report):
             report.error(name, "body declares LD but holds no LD element")
             return
         check_ladder(ladder, declared, name, report)
+        return
+
+    if language == "FBD":
+        diagram = child(body, "FBD")
+        if diagram is None:
+            report.error(name, "body declares FBD but holds no FBD element")
+            return
+        check_fbd(diagram, declared, name, report)
+
+
+def expressions(diagram):
+    """Every variable name an FBD element names, in reading order."""
+    names = []
+    for element in diagram.iter():
+        name = tag(element)
+        if name in ("inVariable", "inOutVariable", "outVariable", "continuation", "connector"):
+            expression = child(element, "expression")
+            if expression is not None and expression.text and expression.text.strip():
+                names.append(expression.text.strip())
+    return names
+
+
+def check_fbd(diagram, declared, name, report):
+    raw_ids = [element.get("localId") for element in diagram.iter() if element.get("localId") is not None]
+    duplicates = sorted({value for value in raw_ids if raw_ids.count(value) > 1})
+    for duplicate in duplicates:
+        report.error(name, "localId %s is used more than once" % duplicate)
+
+    ids = set(raw_ids)
+    for referenced in referenced_ids(diagram):
+        if referenced not in ids:
+            report.error(name, "a connection points at localId %s, which does not exist" % referenced)
+
+    blocks = children(diagram, "block")
+    if not blocks and not children(diagram, "outVariable"):
+        report.error(name, "FBD diagram holds neither a block nor an output variable")
+
+    for block in blocks:
+        block_id = block.get("localId", "?")
+        if not block.get("typeName"):
+            report.error(name, "block %s names no typeName" % block_id)
+        outputs = child(block, "outputVariables")
+        if outputs is None or not children(outputs, "variable"):
+            report.error(name, "block %s has no output variable" % block_id)
+        inputs = child(block, "inputVariables")
+        for variable in children(inputs, "variable") if inputs is not None else []:
+            if not variable.get("formalParameter"):
+                report.error(name, "block %s has an input without a formalParameter" % block_id)
+            if child(variable, "connectionPointIn") is None:
+                report.warning(
+                    name,
+                    "block %s input %s is not connected" % (block_id, variable.get("formalParameter", "?")),
+                )
+
+    for output in children(diagram, "outVariable"):
+        point = child(output, "connectionPointIn")
+        if point is None or not children(point, "connection"):
+            report.error(
+                name,
+                "output variable %s is not connected to anything" % (output.get("localId", "?"),),
+            )
+
+    used = expressions(diagram)
+    for variable in used:
+        if variable not in declared:
+            report.error(name, "variable %r is used but not declared" % variable)
+    for variable in sorted(set(declared) - set(used)):
+        report.warning(name, "variable %r is declared but not used" % variable)
 
 
 def check_ladder(body, declared, name, report):

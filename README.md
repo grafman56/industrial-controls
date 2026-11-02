@@ -19,8 +19,8 @@ claim.
 
 Two support directories sit outside the lab registry:
 
-- `plc/`: one control program in three IEC 61131-3 languages, as PLCopen
-  files you can import into the OpenPLC Editor.
+- `plc/`: five programs in four IEC 61131-3 languages, as PLCopen files you
+  can import into the OpenPLC Editor.
 - `tools/`: small Python tools for this work. `plcopen.py` checks a PLCopen
   program before you import it.
 

@@ -77,6 +77,54 @@ class DemoProgramTests(unittest.TestCase):
         self.assertIn("level_high := level >= 70;", text)
         self.assertIn("interlock", text)
 
+    def test_function_block_diagram_passes(self):
+        report = self.report("level_control_fbd.xml")
+        self.assertEqual([str(p) for p in report.problems], [])
+        self.assertEqual(report.languages, ["FBD"])
+
+    def test_function_block_diagram_wires_the_same_seal_in(self):
+        root = plcopen.load(PLCDIR / "level_control_fbd.xml")
+        pou = plcopen.children(plcopen.child(plcopen.child(root, "types"), "pous"), "pou")[0]
+        diagram = plcopen.child(plcopen.body_of(pou), "FBD")
+
+        ids = plcopen.local_ids(diagram)
+        self.assertEqual(sorted(ids, key=int), ["1", "2", "3", "4", "5", "6", "7"])
+        self.assertEqual(ids["3"], "block")
+        self.assertEqual(ids["7"], "outVariable")
+        for referenced in plcopen.referenced_ids(diagram):
+            self.assertIn(referenced, ids)
+
+        blocks = {block.get("localId"): block.get("typeName") for block in plcopen.children(diagram, "block")}
+        self.assertEqual(blocks, {"3": "OR", "6": "AND"})
+
+        # The high level switch is negated at its input, which is how FBD
+        # writes a normally closed contact.
+        negated = {
+            element.get("localId")
+            for element in diagram.iter()
+            if plcopen.tag(element) == "inVariable" and element.get("negated") == "true"
+        }
+        self.assertEqual(negated, {"4"})
+
+        self.assertEqual(
+            sorted(plcopen.expressions(diagram)),
+            ["interlock", "level_high", "pump_run", "run_latch", "start_cmd"],
+        )
+
+    def test_sequence_is_a_case_state_machine(self):
+        report = self.report("sequence_st.xml")
+        self.assertEqual([str(p) for p in report.problems], [])
+        root = plcopen.load(PLCDIR / "sequence_st.xml")
+        pou = plcopen.children(plcopen.child(plcopen.child(root, "types"), "pous"), "pou")[0]
+        text = plcopen.body_text(plcopen.body_of(pou), "ST")
+        self.assertIn("CASE step OF", text)
+        self.assertIn("END_CASE;", text)
+        self.assertIn("step_timer(IN := (step = 1), PT := T#5s);", text)
+        # Every step must clear the outputs it does not own.
+        self.assertIn("pump_run := FALSE;", text)
+        declared = plcopen.declared_variables(pou)
+        self.assertEqual(declared["step_timer"], "TON")
+
 
 class FailureModeTests(unittest.TestCase):
     def setUp(self):
@@ -146,6 +194,25 @@ class FailureModeTests(unittest.TestCase):
         )
         self.assertTrue(report.ok)
         self.assertIn("spare_signal", " ".join(str(p) for p in report.warnings))
+
+    def test_fbd_unconnected_output_is_an_error(self):
+        text = (PLCDIR / "level_control_fbd.xml").read_text()
+        start = text.index('<outVariable')
+        stripped = text[:start] + re.sub(
+            r"<connectionPointIn>.*?</connectionPointIn>", "", text[start:], count=1, flags=re.S
+        )
+        target = self.tmp / "level_control_fbd.xml"
+        target.write_text(stripped)
+        report = plcopen.check_root(plcopen.load(target), "level_control_fbd.xml")
+        self.assertIn("is not connected to anything", self.messages(report))
+
+    def test_fbd_block_without_a_type_name_is_an_error(self):
+        report = self.mutate("level_control_fbd.xml", 'typeName="OR"', 'typeName2="OR"')
+        self.assertIn("names no typeName", self.messages(report))
+
+    def test_fbd_undeclared_expression_is_an_error(self):
+        report = self.mutate("level_control_fbd.xml", "<expression>interlock</expression>", "<expression>estop</expression>")
+        self.assertIn("estop", self.messages(report))
 
 
 class CommandLineTests(unittest.TestCase):

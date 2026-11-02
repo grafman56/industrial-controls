@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0201">
+  <fileHeader companyName="" productName="Industrial Controls" productVersion="1.0" creationDateTime="2026-11-02T00:00:00"/>
+  <contentHeader name="level_control_fbd" version="1.0">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1"/></fbd>
+      <ld><scaling x="1" y="1"/></ld>
+      <sfc><scaling x="1" y="1"/></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="level_control_fbd" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="start_cmd"><type><BOOL/></type></variable>
+            <variable name="level_high"><type><BOOL/></type></variable>
+            <variable name="interlock"><type><BOOL/></type></variable>
+            <variable name="run_latch"><type><BOOL/></type></variable>
+            <variable name="pump_run"><type><BOOL/></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <FBD>
+            <inVariable localId="1" executionOrderId="1" width="90" height="30" negated="false">
+              <position x="60" y="60"/>
+              <connectionPointOut><relPosition x="90" y="15"/></connectionPointOut>
+              <expression>start_cmd</expression>
+            </inVariable>
+            <inVariable localId="2" executionOrderId="2" width="90" height="30" negated="false">
+              <position x="60" y="140"/>
+              <connectionPointOut><relPosition x="90" y="15"/></connectionPointOut>
+              <expression>run_latch</expression>
+            </inVariable>
+            <block localId="3" typeName="OR" width="70" height="60">
+              <position x="220" y="80"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15"/>
+                    <connection refLocalId="1">
+                      <position x="150" y="75"/>
+                      <position x="220" y="95"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="45"/>
+                    <connection refLocalId="2">
+                      <position x="150" y="155"/>
+                      <position x="220" y="125"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut><relPosition x="70" y="30"/></connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="4" executionOrderId="3" width="90" height="30" negated="true">
+              <position x="340" y="40"/>
+              <connectionPointOut><relPosition x="90" y="15"/></connectionPointOut>
+              <expression>level_high</expression>
+            </inVariable>
+            <inVariable localId="5" executionOrderId="4" width="90" height="30" negated="false">
+              <position x="340" y="140"/>
+              <connectionPointOut><relPosition x="90" y="15"/></connectionPointOut>
+              <expression>interlock</expression>
+            </inVariable>
+            <block localId="6" typeName="AND" width="70" height="90">
+              <position x="500" y="60"/>
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15"/>
+                    <connection refLocalId="3" formalParameter="OUT">
+                      <position x="290" y="110"/>
+                      <position x="500" y="75"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="45"/>
+                    <connection refLocalId="4">
+                      <position x="430" y="55"/>
+                      <position x="500" y="105"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN3">
+                  <connectionPointIn>
+                    <relPosition x="0" y="75"/>
+                    <connection refLocalId="5">
+                      <position x="430" y="155"/>
+                      <position x="500" y="135"/>
+                    </connection>
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables/>
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut><relPosition x="70" y="45"/></connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="7" executionOrderId="5" width="90" height="30" negated="false">
+              <position x="650" y="80"/>
+              <connectionPointIn>
+                <relPosition x="0" y="15"/>
+                <connection refLocalId="6" formalParameter="OUT">
+                  <position x="570" y="105"/>
+                  <position x="650" y="95"/>
+                </connection>
+              </connectionPointIn>
+              <expression>pump_run</expression>
+            </outVariable>
+          </FBD>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>
