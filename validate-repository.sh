@@ -79,6 +79,14 @@ else
 fi
 
 echo
+echo "== PLCopen programs =="
+if [ -d plc ]; then
+  python3 tools/plcopen.py lint plc/*.xml --quiet
+else
+  echo "no plc directory"
+fi
+
+echo
 echo "== shell syntax =="
 # Every shell script in the repository, so a new lab cannot skip this check.
 # The repository-level ./labctl is Python, not shell.

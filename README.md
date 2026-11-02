@@ -18,6 +18,13 @@ lab. Network protocols, fabrics and routing drills stay in
 Everything else in [docs/roadmap.md](docs/roadmap.md) is a plan, not a
 claim.
 
+Two support directories sit outside the lab registry:
+
+- `plc/`: five programs in four IEC 61131-3 languages, as PLCopen files you
+  can import into the OpenPLC Editor.
+- `tools/`: small Python tools for this work. `plcopen.py` checks a PLCopen
+  program before you import it.
+
 ## Quick start
 
 The lab host runs Docker and Containerlab. This repository is deployed there,

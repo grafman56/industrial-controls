@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  IEC 61131-3 structured text, PLCopen TC6 XML.
+
+  Same control logic as level_control_ld.xml, written as text. This version
+  also derives the discrete signals from the analog level, which is the part a
+  ladder diagram cannot do without a compare block.
+
+  level is an INT in 0 to 100 percent.
+-->
+<project xmlns="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <fileHeader companyName="Industrial Controls lab" productName="OpenPLC Editor" productVersion="1" creationDateTime="2026-11-02T12:00:00"/>
+  <contentHeader name="level_control_st">
+    <coordinateInfo>
+      <fbd><scaling x="10" y="10"/></fbd>
+      <ld><scaling x="10" y="10"/></ld>
+      <sfc><scaling x="10" y="10"/></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes/>
+    <pous>
+      <pou name="level_control_st" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="level"><type><INT/></type><initialValue><simpleValue value="0"/></initialValue></variable>
+            <variable name="start_cmd"><type><BOOL/></type></variable>
+            <variable name="level_low"><type><BOOL/></type></variable>
+            <variable name="level_high"><type><BOOL/></type></variable>
+            <variable name="interlock"><type><BOOL/></type></variable>
+            <variable name="run_latch"><type><BOOL/></type></variable>
+            <variable name="pump_run"><type><BOOL/></type></variable>
+            <variable name="level_percent"><type><REAL/></type><initialValue><simpleValue value="0.0"/></initialValue></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[
+(* Scale the raw register to percent.
+   The span and the offset are the two numbers that a faulty plant is usually
+   wrong about, so they are named. *)
+level_percent := INT_TO_REAL(level) * 1.0 + 0.0;
+
+(* Discrete signals derived from the analog value. *)
+level_low  := level < 30;
+level_high := level >= 70;
+interlock  := level <= 0;
+
+(* Seal-in with a high level stop and a pump protection interlock. *)
+IF NOT interlock THEN
+  run_latch := (start_cmd OR run_latch) AND NOT level_high;
+ELSE
+  run_latch := FALSE;
+END_IF;
+
+pump_run := run_latch AND NOT interlock;
+]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations/>
+  </instances>
+</project>
