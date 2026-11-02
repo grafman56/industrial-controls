@@ -43,7 +43,9 @@ for topology_path in topologies:
 
     nodes = topology["topology"]["nodes"]
     endpoints = set()
-    for link in topology["topology"]["links"]:
+    # A topology needs no explicit link: every node also joins the management
+    # network. Only check the links that are declared.
+    for link in topology["topology"].get("links", []):
         for endpoint in link["endpoints"]:
             node, _, _interface = endpoint.partition(":")
             if node not in nodes:
